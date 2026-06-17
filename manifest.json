@@ -1,0 +1,22 @@
+{
+  "name": "Journey Tracker Academic App",
+  "short_name": "JourneyTracker",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#4f46e5",
+  "theme-color": "#4f46e5",
+  "description": "Track targets, log tasks checklists, build consistency streaks, and clear chapters with AI.",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3079/3079201.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3079/3079201.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
+
