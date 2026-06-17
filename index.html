@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <!-- FontAwesome for stickers and icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="theme-color" content="#4f46e5">
+</head>
+<body>
+
+    <!-- Top Motivational Quote Bar -->
+    <div id="quote-bar" class="quote-container">✨ "The secret of getting ahead is getting started." ✨</div>
+
+    <!-- Main App Container -->
+    <main id="app-container">
+
+        <!-- PAGE 1: WELCOME SCREEN -->
+        <section id="page-welcome" class="app-page active">
+            <h1 class="brand-title"><i class="fa-solid fa-compass logo-spin"></i> Journey Tracker</h1>
+            <p class="subtitle">Your ultimate companion to conquer goals and track your daily academic growth! 🚀</p>
+            
+            <div class="tutorial-box">
+                <h3><i class="fa-solid fa-graduation-cap"></i> How to Use Journey Tracker:</h3>
+                <ul>
+                    <li>📝 <strong>Step 1:</strong> Create your profile with your name and class.</li>
+                    <li>🎯 <strong>Step 2:</strong> Set your target, timeline, and break it down into tasks.</li>
+                    <li>📅 <strong>Step 3:</strong> Check-in daily for attendance and tick off completed tasks!</li>
+                    <li>📊 <strong>Step 4:</strong> Track your streaks, unlock epic badges, and practice with AI!</li>
+                </ul>
+            </div>
+            <button class="btn btn-primary" onclick="navigateTo('page-create-profile')"><i class="fa-solid fa-user-plus"></i> Create Profile</button>
+        </section>
+
+        <!-- PAGE 2: CREATE PROFILE -->
+        <section id="page-create-profile" class="app-page">
+            <h2>👤 Create Student Profile</h2>
+            <div class="form-group">
+                <label for="student-name">✨ Student Full Name:</label>
+                <input type="text" id="student-name" placeholder="Enter your name here...">
+            </div>
+            <div class="form-group">
+                <label for="student-class">🏫 Class / Grade:</label>
+                <input type="text" id="student-class" placeholder="e.g., Class 10, Grade 12...">
+            </div>
+            <button class="btn btn-success" onclick="saveProfile()"><i class="fa-solid fa-floppy-disk"></i> Save Profile</button>
+        </section>
+
+        <!-- PAGE 3: SET TARGET -->
+        <section id="page-set-target" class="app-page">
+            <h2>🎯 Set Your Target Goal</h2>
+            <div class="form-group">
+                <label for="target-name">🏆 Target Name:</label>
+                <input type="text" id="target-name" placeholder="e.g., Prepare for Term 1 Math Exam">
+            </div>
+            <div class="form-group">
+                <label for="start-date">📅 Start Date:</label>
+                <input type="date" id="start-date">
+            </div>
+            <div class="form-group">
+                <label for="end-date">🏁 End Date:</label>
+                <input type="date" id="end-date">
+            </div>
+            <div class="form-group">
+                <label for="target-tasks">📝 Tasks (Comma separated list):</label>
+                <textarea id="target-tasks" placeholder="e.g., Revise Ch 1, Complete Assignment, Solve mock paper"></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="saveTarget()"><i class="fa-solid fa-bullseye"></i> Set Target</button>
+        </section>
+
+        <!-- PAGE 4: DASHBOARD -->
+        <section id="page-dashboard" class="app-page">
+            <!-- Sidebar/Corner Utilities Grid -->
+            <div class="utility-grid">
+                <button class="btn-sm btn-utility" onclick="editProfile()"><i class="fa-solid fa-user-pen"></i> Edit Profile</button>
+                <button class="btn-sm btn-utility" onclick="editTarget()"><i class="fa-solid fa-pen-to-square"></i> Edit Target</button>
+                <button class="btn-sm btn-info" onclick="navigateTo('page-progress')"><i class="fa-solid fa-chart-line"></i> Track Progress</button>
+                <button class="btn-sm btn-warn" onclick="renderAchievements(); navigateTo('page-achievements')"><i class="fa-solid fa-award"></i> View Achievements</button>
+                <button class="btn-sm btn-accent" onclick="navigateTo('page-practice')"><i class="fa-solid fa-brain"></i> Practice Questions</button>
+                <button class="btn-sm btn-danger" onclick="deleteProfile()"><i class="fa-solid fa-trash-can"></i> Delete Profile</button>
+            </div>
+
+            <hr>
+
+            <!-- Dashboard Data Displays -->
+            <div class="dashboard-grid">
+                <div class="dash-box profile-box">
+                    <h3><i class="fa-solid fa-id-card"></i> Student Profile</h3>
+                    <p><strong>Name:</strong> <span id="dash-name">-</span></p>
+                    <p><strong>Class:</strong> <span id="dash-class">-</span></p>
+                </div>
+
+                <div class="dash-box target-box">
+                    <h3><i class="fa-solid fa-flag"></i> Target Details</h3>
+                    <p><strong>Target:</strong> <span id="dash-target">-</span></p>
+                    <p><strong>Timeline:</strong> <span id="dash-timeline">-</span></p>
+                </div>
+
+                <div class="dash-box attendance-box">
+                    <h3><i class="fa-solid fa-calendar-check"></i> Attendance</h3>
+                    <p>📅 Today: <span id="current-date-str"></span></p>
+                    <div class="attendance-actions" id="attendance-buttons">
+                        <button class="btn btn-success-sm" onclick="markAttendance(true)"><i class="fa-solid fa-circle-check"></i> Present</button>
+                        <button class="btn btn-danger-sm" onclick="markAttendance(false)"><i class="fa-solid fa-circle-xmark"></i> Absent</button>
+                    </div>
+                    <p id="attendance-status-msg" class="status-msg"></p>
+                </div>
+
+                <div class="dash-box tasks-box">
+                    <h3><i class="fa-solid fa-list-check"></i> Tasks Checklist</h3>
+                    <div id="checklist-container">
+                        <!-- Injected dynamic task nodes -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 5: TRACK PROGRESS -->
+        <section id="page-progress" class="app-page">
+            <h2>📊 Performance Analytics</h2>
+            <div class="metrics-grid">
+                <div class="metric-card card-purple">
+                    <i class="fa-solid fa-circle-nodes card-icon"></i>
+                    <h4>Progress</h4>
+                    <p><span id="metric-tasks-done">0</span> / <span id="metric-tasks-total">0</span> Tasks Ticked</p>
+                </div>
+                <div class="metric-card card-blue">
+                    <i class="fa-solid fa-clipboard-user card-icon"></i>
+                    <h4>Attendance Records</h4>
+                    <p>✅ Present: <span id="metric-present">0</span> | ❌ Absent: <span id="metric-absent">0</span></p>
+                </div>
+                <div class="metric-card card-orange">
+                    <i class="fa-solid fa-fire card-icon"></i>
+                    <h4>Streak Counter</h4>
+                    <p><span id="metric-streak">0</span> Days Consecutive Present</p>
+                </div>
+                <div class="metric-card card-teal">
+                    <i class="fa-solid fa-hourglass-half card-icon"></i>
+                    <h4>Countdown</h4>
+                    <p><span id="metric-days-left">0</span> Days Remaining</p>
+                </div>
+            </div>
+            <button class="btn btn-secondary mt-2" onclick="navigateTo('page-dashboard')"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+        </section>
+
+        <!-- PAGE 6: VIEW ACHIEVEMENT -->
+        <section id="page-achievements" class="app-page">
+            <h2>🏆 Your Milestone Badges</h2>
+            <p class="subtitle">Stay consistent and complete tasks to unlock badges!</p>
+            <div class="badges-grid" id="badges-container">
+                <!-- Badges generated dynamically -->
+            </div>
+            <button class="btn btn-secondary mt-2" onclick="navigateTo('page-dashboard')"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+        </section>
+
+        <!-- PAGE 7: PRACTICE QUESTIONS -->
+        <section id="page-practice" class="app-page">
+            <h2>🧠 AI Practice Room</h2>
+            <p class="subtitle">Generate unique questions instantly powered by Gemini Core AI.</p>
+            
+            <div class="practice-setup-box">
+                <div class="form-inline">
+                    <input type="text" id="ai-class" placeholder="Class e.g. 10th">
+                    <input type="text" id="ai-subject" placeholder="Subject e.g. Physics">
+                    <input type="text" id="ai-chapter" placeholder="Chapter e.g. Light Reflection">
+                </div>
+                <button class="btn btn-accent block-btn" onclick="generateAIQuestion()"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Unlimited Question</button>
+            </div>
+
+            <!-- Question display layout -->
+            <div id="ai-loading" class="hidden"><i class="fa-solid fa-spinner fa-spin"></i> Consulting Gemini Core AI...</div>
+            <div id="ai-response-box" class="hidden">
+                <div class="question-card">
+                    <h4><i class="fa-solid fa-circle-question"></i> Practice Question:</h4>
+                    <p id="ai-question-text"></p>
+                </div>
+            </div>
+            
+            <button class="btn btn-secondary mt-2" onclick="navigateTo('page-dashboard')"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</button>
+        </section>
+
+    </main>
+
+    <!-- App Installation Floating Prompt -->
+    <div id="pwa-install-banner" class="install-banner hidden">
+        <div class="banner-content">
+            <i class="fa-solid fa-mobile-screen-button banner-logo"></i>
+            <div>
+                <h4>Install Journey Tracker</h4>
+                <p>Add to your home screen for quick daily check-ins!</p>
+            </div>
+        </div>
+        <div class="banner-actions">
+            <button id="btn-pwa-install" class="btn-sm btn-success">Install</button>
+            <button id="btn-pwa-close" class="btn-sm btn-utility">Later</button>
+        </div>
+    </div>
+
+    <!-- Footer Component -->
+    <footer>
+        <p>Made By <strong>Pathak Rohit</strong> 🌟 | Keep moving forward!</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+                                      </html>
+                  
